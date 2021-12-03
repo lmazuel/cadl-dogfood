@@ -1,16 +1,93 @@
 import "@cadl-lang/rest";
 import "@cadl-lang/openapi3";
+import "./common.cadl";
 
-@serviceTitle("Hello world")
-@serviceVersion("0.1.0")
-namespace Demo.HelloWorld;
+@serviceTitle(
+  "Microsoft Cognitive Language Service - Question Answering - Authoring"
+)
+@serviceVersion("21-10-01")
+namespace QnAMaker;
 
 using Cadl.Http;
 
-@doc("Hello world service")
-@route("/hello")
-namespace Hello {
-  @doc("Returns 'hi'")
+model ApiKey {
+  @doc("Service connection key")
+  @header
+  "Ocp-Apim-Subscription-Key": string;
+}
+
+alias OkWithError<T> = OkResponse<T> | ErrorResponse;
+
+@route("/query-knowledgebases/projects")
+namespace QuestionAnsweringProjects {
+  @doc("Gets all projects for a user")
   @get
-  op sayHi(): OkResponse<"hi">;
+  @pageable
+  op ListProjects(
+    ... ApiVersionParameter,
+    ... ListParameters
+  ): OkWithError<ProjectsMetadata>;
+
+  @doc("Get the requested project metadata")
+  @get
+  op GetProjectDetails(
+    ... ApiVersionParameter,
+    ... ProjectNamePathParameter
+  ): OkWithError<ProjectMetadata>;
+
+  @doc("Create or update a project")
+  @patch
+  op CreateProject(
+    ... ApiVersionParameter,
+    ... ProjectNamePathParameter,
+    @body body: CreateProjectOptions
+  ): {
+    @header statusCode: 200 | 201;
+    @body body: ProjectMetadata;
+  } | ErrorResponse;
+
+  @doc("Delete the project")
+  @patch
+  op DeleteProject(... ApiVersionParameter, ... ProjectNamePathParameter): {
+    @header statusCode: 202;
+    @header "Operation-Location": string;
+  } | ErrorResponse;
+}
+
+// Model definitions
+
+model Page<T> {
+  value: T[];
+  nextLink?: string;
+}
+
+model ProjectsMetadata {
+  ... Page<ProjectMetadata>;
+}
+
+@doc("Represents the project")
+model ProjectMetadata {
+  @doc("Name of the project")
+  projectName: string;
+}
+
+@doc("Parameters needed to create the project")
+model CreateProjectOptions {
+  @doc("Description of the project")
+  description?: string;
+  ... Language;
+
+  @doc("Resource enabled for multiple languages across projects or not")
+  multilingualResource?: boolean;
+
+  @doc("Configurable settings of the Project")
+  settings?: ProjectSettings;
+}
+
+@doc("Configurable settings of the Project")
+model ProjectSettings {
+  @doc(
+    "Default Answer response when no good match is found in the knowledge base"
+  )
+  defaultAnswer?: string;
 }
