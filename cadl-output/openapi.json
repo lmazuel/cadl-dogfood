@@ -359,7 +359,7 @@
   "components": {
     "parameters": {
       "ApiVersionParameter": {
-        "name": "api-vfffersion",
+        "name": "api-version",
         "in": "query",
         "required": true,
         "description": "Client API version",

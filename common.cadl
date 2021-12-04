@@ -45,7 +45,7 @@ enum ErrorCode {
 model ApiVersionParameter {
   @doc("Client API version")
   @query
-  "api-vfffersion": string;
+  "api-version": string;
 }
 
 model ProjectNamePathParameter {
