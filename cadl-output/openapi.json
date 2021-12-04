@@ -1,26 +1,353 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Hello world",
-    "version": "0.1.0"
+    "title": "Microsoft Cognitive Language Service - Question Answering - Authoring",
+    "version": "21-10-01"
   },
   "tags": [],
   "paths": {
-    "/hello": {
+    "/query-knowledgebases/projects": {
       "get": {
-        "operationId": "Hello_sayHi",
-        "summary": "Returns 'hi'",
-        "parameters": [],
+        "operationId": "QuestionAnsweringProjects_ListProjects",
+        "summary": "Gets all projects for a user",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ApiVersionParameter"
+          },
+          {
+            "$ref": "#/components/parameters/TopParameter"
+          },
+          {
+            "$ref": "#/components/parameters/SkipParameter"
+          },
+          {
+            "$ref": "#/components/parameters/MaxPageSizeParameter"
+          }
+        ],
         "responses": {
           "200": {
             "description": "The request has succeeded.",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "string",
-                  "enum": [
-                    "hi"
-                  ]
+                  "$ref": "#/components/schemas/ProjectsMetadata"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/query-knowledgebases/projects/{projectName}": {
+      "get": {
+        "operationId": "QuestionAnsweringProjects_GetProjectDetails",
+        "summary": "Get the requested project metadata",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ApiVersionParameter"
+          },
+          {
+            "$ref": "#/components/parameters/ProjectNamePathParameter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectMetadata"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "operationId": "QuestionAnsweringProjects_DeleteProject",
+        "summary": "Delete the project",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ApiVersionParameter"
+          },
+          {
+            "$ref": "#/components/parameters/ProjectNamePathParameter"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "A successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {},
+                  "x-cadl-name": "(anonymous model)"
+                }
+              }
+            },
+            "headers": {
+              "operation-location": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProjectOptions"
+              }
+            }
+          }
+        },
+        "x-ms-long-running-operation": true
+      }
+    },
+    "/query-knowledgebases/projects/deletion-jobs/{jobId}": {
+      "get": {
+        "operationId": "QuestionAnsweringProjects_GetDeleteStatus",
+        "summary": "Gets the status of a Project delete job",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ApiVersionParameter"
+          },
+          {
+            "$ref": "#/components/parameters/JobIdParameter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobState"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/query-knowledgebases/projects/{projectName}/:export": {
+      "post": {
+        "operationId": "QuestionAnsweringProjects_Export",
+        "x-ms-long-running-operation": true,
+        "summary": "Export project metadata and assets",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ApiVersionParameter"
+          },
+          {
+            "$ref": "#/components/parameters/ProjectNamePathParameter"
+          },
+          {
+            "$ref": "#/components/parameters/ImportExportFormatParameter"
+          },
+          {
+            "$ref": "#/components/parameters/AssetKindParameter"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "A successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {},
+                  "x-cadl-name": "(anonymous model)"
+                }
+              }
+            },
+            "headers": {
+              "operation-location": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/query-knowledgebases/projects/{projectName}/export/jobs/{jobId}": {
+      "get": {
+        "operationId": "QuestionAnsweringProjects_GetExportStatus",
+        "summary": "Gets the status of an Export job, once job completes, returns the project metadata, and assets",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ApiVersionParameter"
+          },
+          {
+            "$ref": "#/components/parameters/ProjectNamePathParameter"
+          },
+          {
+            "$ref": "#/components/parameters/JobIdParameter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExportJobState"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/query-knowledgebases/projects/{projectName}/:import": {
+      "post": {
+        "operationId": "QuestionAnsweringProjects_Import",
+        "x-ms-long-running-operation": true,
+        "summary": "Import project assets",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ApiVersionParameter"
+          },
+          {
+            "$ref": "#/components/parameters/ProjectNamePathParameter"
+          },
+          {
+            "$ref": "#/components/parameters/ImportExportFormatParameter"
+          },
+          {
+            "$ref": "#/components/parameters/AssetKindParameter"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "A successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {},
+                  "x-cadl-name": "(anonymous model)"
+                }
+              }
+            },
+            "headers": {
+              "operation-location": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/query-knowledgebases/projects/{projectName}/import/jobs/{jobId}": {
+      "get": {
+        "operationId": "QuestionAnsweringProjects_GetImportStatus",
+        "summary": "Gets the status of an Import job",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ApiVersionParameter"
+          },
+          {
+            "$ref": "#/components/parameters/ProjectNamePathParameter"
+          },
+          {
+            "$ref": "#/components/parameters/JobIdParameter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobState"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -29,5 +356,312 @@
       }
     }
   },
-  "components": {}
+  "components": {
+    "parameters": {
+      "ApiVersionParameter": {
+        "name": "api-vfffersion",
+        "in": "query",
+        "required": true,
+        "description": "Client API version",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "TopParameter": {
+        "name": "top",
+        "in": "query",
+        "required": false,
+        "description": "The maximum number of resources to return from the collection",
+        "x-ms-parameter-location": "method",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "SkipParameter": {
+        "name": "skip",
+        "in": "query",
+        "required": false,
+        "description": "An offset into the collection of the first resource to be returned",
+        "x-ms-parameter-location": "method",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "MaxPageSizeParameter": {
+        "name": "mazpagesize",
+        "in": "query",
+        "required": false,
+        "description": "The maximum number of resources to include in a single response",
+        "x-ms-parameter-location": "method",
+        "schema": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "ProjectNamePathParameter": {
+        "name": "projectName",
+        "in": "path",
+        "required": true,
+        "description": "The name of the project to use",
+        "x-ms-parameter-location": "method",
+        "schema": {
+          "type": "string",
+          "maxLength": 100
+        }
+      },
+      "JobIdParameter": {
+        "name": "jobId",
+        "in": "path",
+        "required": true,
+        "description": "Job ID",
+        "x-ms-parameter-location": "method",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "ImportExportFormatParameter": {
+        "name": "format",
+        "in": "query",
+        "required": false,
+        "description": "Knowledge base Import or Export format",
+        "x-ms-parameter-location": "method",
+        "schema": {
+          "type": "string",
+          "enum": [
+            "json",
+            "tsv",
+            "excel"
+          ]
+        }
+      },
+      "AssetKindParameter": {
+        "name": "assetKind",
+        "in": "query",
+        "required": false,
+        "description": "Kind of the asset of the project",
+        "x-ms-parameter-location": "method",
+        "schema": {
+          "type": "string",
+          "enum": [
+            "qnas",
+            "synonyms"
+          ]
+        }
+      }
+    },
+    "schemas": {
+      "ProjectsMetadata": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectMetadata"
+            },
+            "x-cadl-name": "QnAMaker.ProjectMetadata[]"
+          },
+          "nextLink": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/Error",
+            "description": "The error object"
+          }
+        },
+        "description": "Error response",
+        "required": [
+          "error"
+        ]
+      },
+      "ProjectMetadata": {
+        "type": "object",
+        "properties": {
+          "projectName": {
+            "type": "string",
+            "description": "Name of the project"
+          }
+        },
+        "description": "Represents the project",
+        "required": [
+          "projectName"
+        ]
+      },
+      "CreateProjectOptions": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "description": "Description of the project"
+          },
+          "language": {
+            "type": "string",
+            "description": "Language of the text records. This is BCP-47 representation of a language. For example, use \"en\" for English; \"es\" for Spanish etc. If not set, use \"en\" for English as default."
+          },
+          "multilingualResource": {
+            "type": "boolean",
+            "description": "Resource enabled for multiple languages across projects or not"
+          },
+          "settings": {
+            "$ref": "#/components/schemas/ProjectSettings",
+            "description": "Configurable settings of the Project"
+          }
+        },
+        "description": "Parameters needed to create the project"
+      },
+      "JobState": {
+        "type": "object",
+        "properties": {
+          "createdDateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expirationDateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "jobId": {
+            "type": "string"
+          },
+          "lastUpdatedDateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "$ref": "#/components/schemas/JobStatus"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "x-cadl-name": "Error[]"
+          }
+        },
+        "description": "Job state represents the job metadata and any errors",
+        "required": [
+          "createdDateTime",
+          "jobId",
+          "lastUpdatedDateTime",
+          "status",
+          "errors"
+        ]
+      },
+      "ExportJobState": {
+        "type": "object",
+        "properties": {
+          "createdDateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expirationDateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "jobId": {
+            "type": "string"
+          },
+          "lastUpdatedDateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "$ref": "#/components/schemas/JobStatus"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "x-cadl-name": "Error[]"
+          },
+          "resultUrl": {
+            "type": "string",
+            "description": "URL to download the result of the Export Job"
+          }
+        },
+        "description": "Export job status, project metadata, and assets.",
+        "required": [
+          "createdDateTime",
+          "jobId",
+          "lastUpdatedDateTime",
+          "status",
+          "errors",
+          "resultUrl"
+        ]
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "$ref": "#/components/schemas/ErrorCode",
+            "description": "One of a server-defined set of error codes"
+          },
+          "message": {
+            "type": "string",
+            "description": "A human-readable representation of the error"
+          },
+          "target": {
+            "type": "string",
+            "description": "Error target"
+          }
+        },
+        "description": "The error object",
+        "required": [
+          "code",
+          "message"
+        ]
+      },
+      "ProjectSettings": {
+        "type": "object",
+        "properties": {
+          "defaultAnswer": {
+            "type": "string",
+            "description": "Default Answer response when no good match is found in the knowledge base"
+          }
+        },
+        "description": "Configurable settings of the Project"
+      },
+      "JobStatus": {
+        "type": "string",
+        "enum": [
+          "notStarted",
+          "running",
+          "succeeded",
+          "failed",
+          "cancelled",
+          "cancelling",
+          "partiallyCompleted"
+        ]
+      },
+      "ErrorCode": {
+        "type": "string",
+        "enum": [
+          "InvalidRequest",
+          "InvalidArgument",
+          "Unauthorized",
+          "Forbidden",
+          "NotFound",
+          "ProjectNotFound",
+          "OperationNotFound",
+          "AzureCognitiveSearchNotFound",
+          "AzureCognitiveSearchIndexNotFound",
+          "TooManyRequests",
+          "AzureCognitiveSearchThrottling",
+          "AzureCognitiveSearchIndexLimitReached",
+          "InternalServerError",
+          "ServiceUnavailable"
+        ]
+      }
+    }
+  }
 }

@@ -20,6 +20,11 @@ model Error {
   target?: string;
 }
 
+@doc("Collection of error types")
+model Errors {
+  errors: Error[];
+}
+
 enum ErrorCode {
   "InvalidRequest",
   "InvalidArgument",
@@ -51,6 +56,13 @@ model ProjectNamePathParameter {
   projectName: string;
 }
 
+model JobIdParameter {
+  @extension("x-ms-parameter-location", "method")
+  @doc("Job ID")
+  @path
+  jobId: string;
+}
+
 model TopParameter {
   @extension("x-ms-parameter-location", "method")
   @doc("The maximum number of resources to return from the collection")
@@ -74,9 +86,42 @@ model MaxPageSizeParameter {
 
 alias ListParameters = TopParameter & SkipParameter & MaxPageSizeParameter;
 
+model ImportExportFormatParameter {
+  @extension("x-ms-parameter-location", "method")
+  @doc("Knowledge base Import or Export format")
+  @query
+  format?: ImportExportFormat;
+}
+
+model AssetKindParameter {
+  @extension("x-ms-parameter-location", "method")
+  @doc("Kind of the asset of the project")
+  @query
+  assetKind?: "qnas" | "synonyms";
+}
+
+alias LROResponse = AcceptedResponse & {
+  @header "Operation-Location": string;
+} | ErrorResponse;
+
 // Common models
 
 model Language {
-    @doc("Language of the text records. This is BCP-47 representation of a language. For example, use \"en\" for English; \"es\" for Spanish etc. If not set, use \"en\" for English as default.")
-    language?: string;
+  @doc(
+    "Language of the text records. This is BCP-47 representation of a language. For example, use \"en\" for English; \"es\" for Spanish etc. If not set, use \"en\" for English as default."
+  )
+  language?: string;
+}
+
+enum ImportExportFormat {
+  @doc("Export or Import QnA assets in JSON format")
+  "json",
+  @doc(
+    "Export or Import knowledge base replica including all assets and metadata in Excel format."
+  )
+  "tsv",
+  @doc(
+    "Export or Import knowledge base replica including all assets and metadata in Tsv format."
+  )
+  "excel",
 }
